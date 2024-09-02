@@ -15,9 +15,10 @@ program
   .description("Retrieves a random quote")
   .action(async () => {
     try {
-      console.log("Executing getQuote command..."); 
+      console.log("Executing getQuote command...");
       const data = await fs.readFile(QUOTE_FILE, "utf8");
       const lines = data.trim().split("\n").filter(Boolean);
+      console.log(`Read ${lines.length} quotes from file.`);
       if (lines.length === 0) {
         console.log(chalk.red("No quotes available."));
         return;
@@ -41,7 +42,7 @@ program
   .description("Adds a quote to the quote file")
   .action(async (quote, author) => {
     try {
-      console.log("Executing addQuote command..."); 
+      console.log("Executing addQuote command...");
       if (!quote) {
         console.error(chalk.red("Error: No quote provided."));
         process.exit(1);
@@ -52,8 +53,8 @@ program
       console.log(chalk.green("Quote added successfully."));
     } catch (error) {
       console.error(chalk.red("Error writing to quotes file:", error.message));
-      process.exit(1); 
+      process.exit(1);
+    }
   });
 
 program.parse();
-
