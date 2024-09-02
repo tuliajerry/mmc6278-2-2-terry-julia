@@ -1,17 +1,7 @@
 const { program } = require("commander");
 const fs = require("fs/promises");
-const path = require("path");
 const chalk = require("chalk");
-
-const QUOTE_FILE = path.resolve(__dirname, "quotes.txt");
-
-async function ensureFileExists() {
-  try {
-    await fs.access(QUOTE_FILE);
-  } catch {
-    await fs.writeFile(QUOTE_FILE, "");
-  }
-}
+const QUOTE_FILE = "quotes.txt";
 
 program
   .name("quotes")
@@ -23,44 +13,35 @@ program
   .description("Retrieves a random quote")
   .action(async () => {
     try {
-      await ensureFileExists();
       const data = await fs.readFile(QUOTE_FILE, "utf8");
-      const quotes = data.split('\n').filter(line => line.trim() !== '');
-
+      const quotes = data.trim().split("\n").filter(line => line);
       if (quotes.length === 0) {
         console.log(chalk.red("No quotes found."));
         return;
       }
-
-      const randomIndex = Math.floor(Math.random() * quotes.length);
-      const [quote, author] = quotes[randomIndex].split('|');
-
-      console.log(chalk.blue(`"${quote.trim()}"`));
-      console.log(chalk.green(`- ${author.trim()}`));
-    } catch (error) {
-      console.error(chalk.red("Error reading the quotes file:"), error.message);
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      const [quote, author] = randomQuote.split("|");
+      console.log(chalk.green(`"${quote.trim()}" - ${author.trim()}`));
+    } catch (err) {
+      console.error(chalk.red("Error reading quotes file."), err);
     }
   });
 
 program
   .command("addQuote <quote> [author]")
-  .description("Adds a quote to the quotes file")
+  .description("adds a quote to the quote file")
   .action(async (quote, author = "Anonymous") => {
-    if (!quote) {
-      console.error(chalk.red("Quote cannot be empty."));
-      return;
-    }
-
     try {
-      await ensureFileExists();
-      const newQuote = `${quote}|${author}\n`;
-      await fs.appendFile(QUOTE_FILE, newQuote);
-      console.log(chalk.green("Quote added successfully!"));
-    } catch (error) {
-      console.error(chalk.red("Error adding the quote:"), error.message);
+      const data = await fs.readFile(QUOTE_FILE, "utf8");
+      const newQuote = `${quote.trim()}|${author.trim()}`;
+      await fs.writeFile(QUOTE_FILE, data.trim() + "\n" + newQuote + "\n", "utf8");
+      console.log(chalk.green("Quote added successfully."));
+    } catch (err) {
+      console.error(chalk.red("Error writing to quotes file."), err);
     }
   });
 
-program.parse(process.argv);
+program.parse();
+
 
 
