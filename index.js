@@ -31,6 +31,10 @@ program
   .command("addQuote <quote> [author]")
   .description("Adds a quote to the quotes file")
   .action(async (quote, author = "Anonymous") => {
+    if (!quote) {
+      console.error(chalk.red("Quote cannot be empty."));
+      return;
+    }
     try {
       const newQuote = `${quote}|${author}\n`;
       await fs.appendFile(QUOTE_FILE, newQuote);
@@ -41,4 +45,5 @@ program
   });
 
 program.parse();
+
 
