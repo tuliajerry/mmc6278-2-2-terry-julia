@@ -1,55 +1,37 @@
-const fs = require('fs');
-const path = require('path');
+const { program } = require("commander");
+const fs = require("fs/promises");
+const chalk = require("chalk");
+const QUOTE_FILE = "quotes.txt";
 
-const quotesFile = path.join(__dirname, 'quotes.txt');
+program
+  .name("quotes")
+  .description("CLI tool for inspiration")
+  .version("0.1.0");
 
-function addQuote(quote, author) {
-  if (!quote) {
-    console.error("No quote provided");
-    process.exit(1);
-  }
-
-  const quoteLine = `${quote}|${author || 'Anonymous'}\n`;
-
-  fs.appendFile(quotesFile, quoteLine, (err) => {
-    if (err) {
-      console.error("Error writing to file:", err);
-      process.exit(1);
-    }
-    console.log("Quote added successfully");
+program
+  .command("getQuote")
+  .description("Retrieves a random quote")
+  .action(async () => {
+    // TODO: Pull a random quote from the quotes.txt file
+    // console log the quote and author
+    // You may style the text with chalk as you wish
   });
-}
 
-function getQuote() {
-  fs.readFile(quotesFile, 'utf8', (err, data) => {
-    if (err) {
-      console.error("Error reading file:", err);
-      process.exit(1);
-    }
-    const quotes = data.split('\n').filter(line => line.trim() !== '');
-    if (quotes.length === 0) {
-      console.log("No quotes available");
-    } else {
-      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-      console.log(randomQuote);
-    }
+program
+  .command("addQuote <quote> [author]")
+  .description("adds a quote to the quote file")
+  .action(async (quote, author) => {
+    // TODO: Add the quote and author to the quotes.txt file
+    // If no author is provided,
+    // save the author as "Anonymous".
+    // After the quote/author is saved,
+    // alert the user that the quote was added.
+    // You may style the text with chalk as you wish
+    // HINT: You can store both author and quote on the same line using
+    // a separator like pipe | and then using .split() when retrieving
   });
-}
 
-const [command, ...args] = process.argv.slice(2);
-
-switch (command) {
-  case 'addQuote':
-    addQuote(args[0], args[1]);
-    break;
-  case 'getQuote':
-    getQuote();
-    break;
-  default:
-    console.error("Unknown command");
-    process.exit(1);
-}
-
+program.parse();
 
 program.parse();
 
