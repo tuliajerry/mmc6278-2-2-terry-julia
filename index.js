@@ -13,31 +13,31 @@ program
   .description("Retrieves a random quote")
   .action(async () => {
     try {
-      const quotes = await fs.readFile(QUOTE_FILE, "utf8");
-      const quotesArray = quotes.trim().split('\n').filter(line => line.trim() !== '');
-      if (quotesArray.length === 0) {
-        console.log(chalk.yellow("No quotes available."));
+      const data = await fs.readFile(QUOTE_FILE, "utf-8");
+      const quotes = data.split("\n").filter(line => line.trim() !== "");
+      if (quotes.length === 0) {
+        console.log("No quotes available.");
         return;
       }
-      const randomIndex = Math.floor(Math.random() * quotesArray.length);
-      const [quote, author] = quotesArray[randomIndex].split('|');
-      console.log(chalk.cyan(quote));
-      console.log(chalk.green(`- ${author || "Anonymous"}`));
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      const [quote, author] = quotes[randomIndex].split("|");
+      console.log(chalk.green(quote.trim()));
+      console.log(`- ${author ? author.trim() : "Anonymous"}`);
     } catch (error) {
-      console.error(chalk.red("Error reading quotes file"), error);
+      console.error("Error reading quotes file:", error);
     }
   });
 
 program
   .command("addQuote <quote> [author]")
   .description("adds a quote to the quote file")
-  .action(async (quote, author) => {
+  .action(async (quote, author = "Anonymous") => {
     try {
-      const authorName = author || "Anonymous";
-      await fs.appendFile(QUOTE_FILE, `${quote}|${authorName}\n`);
-      console.log(chalk.green("Quote added successfully."));
+      const formattedQuote = `${quote} | ${author}`;
+      await fs.appendFile(QUOTE_FILE, `${formattedQuote}\n`);
+      console.log(chalk.blue("Quote added successfully."));
     } catch (error) {
-      console.error(chalk.red("Error adding quote"), error);
+      console.error("Error adding quote to file:", error);
     }
   });
 
