@@ -5,6 +5,14 @@ const chalk = require("chalk");
 
 const QUOTE_FILE = path.resolve(__dirname, "quotes.txt");
 
+async function ensureFileExists() {
+  try {
+    await fs.access(QUOTE_FILE);
+  } catch {
+    await fs.writeFile(QUOTE_FILE, "");
+  }
+}
+
 program
   .name("quotes")
   .description("CLI tool for inspiration")
@@ -15,6 +23,7 @@ program
   .description("Retrieves a random quote")
   .action(async () => {
     try {
+      await ensureFileExists();
       const data = await fs.readFile(QUOTE_FILE, "utf8");
       const quotes = data.split('\n').filter(line => line.trim() !== '');
 
@@ -43,6 +52,7 @@ program
     }
 
     try {
+      await ensureFileExists();
       const newQuote = `${quote}|${author}\n`;
       await fs.appendFile(QUOTE_FILE, newQuote);
       console.log(chalk.green("Quote added successfully!"));
@@ -52,6 +62,5 @@ program
   });
 
 program.parse(process.argv);
-
 
 
