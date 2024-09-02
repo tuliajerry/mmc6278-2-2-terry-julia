@@ -2,6 +2,7 @@ const { program } = require("commander");
 const fs = require("fs/promises");
 const path = require("path");
 const chalk = require("chalk");
+
 const QUOTE_FILE = path.join(__dirname, "quotes.txt");
 
 program
@@ -14,6 +15,7 @@ program
   .description("Retrieves a random quote")
   .action(async () => {
     try {
+      console.log("Executing getQuote command..."); 
       const data = await fs.readFile(QUOTE_FILE, "utf8");
       const lines = data.trim().split("\n").filter(Boolean);
       if (lines.length === 0) {
@@ -30,14 +32,16 @@ program
       }
     } catch (error) {
       console.error(chalk.red("Error reading quotes file:", error.message));
+      process.exit(1);
     }
   });
 
 program
   .command("addQuote <quote> [author]")
-  .description("adds a quote to the quote file")
+  .description("Adds a quote to the quote file")
   .action(async (quote, author) => {
     try {
+      console.log("Executing addQuote command..."); 
       if (!quote) {
         console.error(chalk.red("Error: No quote provided."));
         process.exit(1);
@@ -48,7 +52,8 @@ program
       console.log(chalk.green("Quote added successfully."));
     } catch (error) {
       console.error(chalk.red("Error writing to quotes file:", error.message));
-    }
+      process.exit(1); 
   });
 
 program.parse();
+
