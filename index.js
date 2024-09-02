@@ -5,12 +5,16 @@ const QUOTE_FILE = "quotes.txt";
 
 const getQuote = async () => {
   try {
+    console.log('Reading quotes from file...');
     const fileContent = await fs.readFile(QUOTE_FILE, "utf-8");
+    console.log('File content:', fileContent);
+    
     const quotes = fileContent.trim().split('\n').filter(line => line.trim() !== '');
     if (quotes.length === 0) {
       console.log(chalk.red("No quotes found."));
       return;
     }
+    
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const [quote, author] = quotes[randomIndex].split('|');
     console.log(chalk.green(`"${quote.trim()}" - ${author.trim()}`));
@@ -28,6 +32,7 @@ const addQuote = async (quote, author) => {
   try {
     const formattedAuthor = author || "Anonymous";
     const formattedQuote = `${quote.trim()} | ${formattedAuthor.trim()}\n`;
+    console.log('Adding quote:', formattedQuote);
     await fs.appendFile(QUOTE_FILE, formattedQuote);
     console.log(chalk.blue("Quote added successfully."));
   } catch (error) {
@@ -46,5 +51,4 @@ program
   .action(addQuote);
 
 program.parse();
-
 
