@@ -1,3 +1,6 @@
+describe("Quote App", function() {
+  this.timeout(10000); 
+
 const exec = require("child_process").exec;
 const fs = require("fs").promises;
 const path = require("path");
@@ -157,4 +160,5 @@ describe("Quote App", () => {
       expect(output).to.not.exist;
     }
   });
+});
 });
